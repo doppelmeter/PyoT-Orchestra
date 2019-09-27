@@ -22,9 +22,9 @@ client.loop_start()
 while True:  # making a loop
     if keyboard.is_pressed('f'):  # iy 'q' is pressed
         client.publish(settings.topic, payload="snare", qos=0, retain=False)
-    if keyboard.is_pressed('space'):  # if key 'q' is pressed
+    if keyboard.is_pressed('space'):  # if key 'space' is pressed
         client.publish(settings.topic, payload="hat", qos=0, retain=False)
-    if keyboard.is_pressed('h'):  # if key 'q' is pressed
+    if keyboard.is_pressed('h'):  # if key 'h' is pressed
         client.publish(settings.topic, payload="kick", qos=0, retain=False)
     else:
         pass
