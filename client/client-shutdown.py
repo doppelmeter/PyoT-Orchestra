@@ -1,7 +1,8 @@
+#!/usr/bin/python
 import paho.mqtt.client as mqtt
-
-from psonic import *
-
+from subprocess import call
+from sense_hat import SenseHat
+import time
 
 
 # MQTT Settings
@@ -28,16 +29,13 @@ client.loop_start()
 
 
 def on_message(client, userdata, message):
-    if message.payload.decode("utf-8") == "kick":
-        play(60)
-    elif message.payload.decode("utf-8") == "snare":
-        play(40)
-    elif message.payload.decode("utf-8") == "hat":
-        play(100)
-
+    if message.payload.decode("utf-8") == "off":
+        sense = SenseHat()
+        sense.show_message('Auf Wiedersehen', scroll_speed=0.1)
+        time.sleep(10)
+        call("sudo poweroff", shell=True)
 
 client.on_message = on_message
 
 while True:
     pass
-
