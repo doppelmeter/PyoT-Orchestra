@@ -25,14 +25,7 @@ def get_ip_adress():
 
 ip_adress = get_ip_adress()
 
-# MQTT Settings
-# ======================================================================================================================
-class settings:
-    pass
-
-settings.broker = "test.mosquitto.org"
-settings.broker_port = 1883
-settings.topic = "FHNW2019"
+from settings import *
 
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)

@@ -5,15 +5,7 @@ from sense_hat import SenseHat
 import time
 
 
-# MQTT Settings
-# ======================================================================================================================
-class settings:
-    pass
-
-
-settings.broker = "test.mosquitto.org"
-settings.broker_port = 1883
-settings.topic = "FHNW2019"
+from settings import *
 
 # generate soundwave
 # ======================================================================================================================

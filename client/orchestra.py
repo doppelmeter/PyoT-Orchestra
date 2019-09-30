@@ -2,16 +2,10 @@ import paho.mqtt.client as mqtt
 
 from psonic import *
 
-
-# MQTT Settings
-# ======================================================================================================================
-class settings:
-    pass
+from settings import *
 
 
-settings.broker = "test.mosquitto.org"
-settings.broker_port = 1883
-settings.topic = "FHNW2019"
+
 
 # generate Lookup dict for notes
 # ======================================================================================================================
