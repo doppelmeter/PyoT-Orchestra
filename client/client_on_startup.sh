@@ -4,7 +4,8 @@
 # Add script as cronjob @reboot
 
 # Update from GitHub
-git pull https://github.com/doppelmeter/PyoT-Orchestra
+cd ~/PyoT-Orchestra/
+git pull https://github.com/doppelmeter/PyoT-Orchestra.git
 
 # Start Client Software
 python3 ~/PyoT-Orchestra/client/show_ip_on_sensehat.py
