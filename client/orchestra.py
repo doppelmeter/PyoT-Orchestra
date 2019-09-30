@@ -98,6 +98,9 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, message):
+    """
+    message expects: '127.0.0.1;C4;tri':
+    """
     try:
         msg = message.payload.decode("utf-8")
 
