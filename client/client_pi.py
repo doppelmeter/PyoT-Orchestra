@@ -2,7 +2,7 @@
 from sense_hat import SenseHat
 import time
 import socket
-
+import subprocess
 import paho.mqtt.client as mqtt
 
 
@@ -39,11 +39,48 @@ client.connect(settings.broker, settings.broker_port, 60)
 
 client.loop_start()
 
-# Tonhöhe anpassen via Joystick
+# Tonleiter und Instrument auswählen
 # ======================================================================================================================
 sense = SenseHat()
+# Tonleiter
 scale = ["C", "D", "E", "F", "G", "A", "H"]
-synt = ["0", "1", "2", "3"]
+# Instrumente
+black = (0,0,0)
+r = (255,0,0)
+g = (0,255,0)
+y = (255,255,0)
+gray = (180, 180, 180)
+b = (0,0,255)
+w =(255,255,255)
+triangel = [g,g,g,g,g,g,g,g,
+            g,g,g,g,g,g,g,g,
+            g,g,g,w,g,g,g,g,
+            g,g,w,g,w,g,g,g,
+            g,w,g,g,g,w,g,g,
+            w,w,w,w,w,w,w,g,
+            g,g,g,g,g,g,g,g,
+            g,g,g,g,g,g,g,g]
+
+piano =    [g,g,g,g,g,g,g,g,
+            g,g,g,g,g,g,g,g,
+            gray,black,gray,black,gray,black,gray,black,
+            gray,black,gray,black,gray,black,gray,black,
+            gray,gray,gray,gray,gray,gray,gray,gray,
+            gray,gray,gray,gray,gray,gray,gray,gray,
+            g,g,g,g,g,g,g,g,
+            g,g,g,g,g,g,g,g]
+
+guitar =   [w,g,g,g,g,g,g,g,
+            g,w,g,g,g,g,g,g,
+            g,g,w,g,w,w,g,g,
+            g,g,g,w,w,w,w,g,
+            g,g,g,w,w,w,w,g,
+            g,g,g,w,w,w,w,g,
+            g,g,g,g,w,w,g,g,
+            g,g,g,g,g,g,g,g]
+
+synt = [triangel, piano, guitar]
+
 current_synt = 0
 current_tones = 0
 octave = 5
@@ -74,7 +111,7 @@ def define_tones_synt(current_tones, current_synt, octave):
             octave += 1
             if octave > 8:
                 octave = 0
-        sense.show_letter(str(synt[current_synt]))
+        sense.set_pixels(synt[current_synt])
 
     elif event.direction == "left":
         current_synt -= 1
@@ -83,7 +120,7 @@ def define_tones_synt(current_tones, current_synt, octave):
             octave -= 1
             if octave < 0:
                 octave = 8
-        sense.show_letter(str(synt[current_synt]))
+        sense.set_pixels(synt[current_synt])
     
     return current_tones, current_synt, octave
 
@@ -94,6 +131,18 @@ def hit():
     #y = acceleration['y']
     z = acceleration['z']
     return abs(z)
+
+attention =     [r,r,r,y,y,r,r,r,
+                r,r,r,y,y,r,r,r,
+                r,r,r,y,y,r,r,r,
+                r,r,r,y,y,r,r,r,
+                r,r,r,r,r,r,r,r,
+                r,r,r,y,y,r,r,r,
+                r,r,r,y,y,r,r,r,
+                r,r,r,r,r,r,r,r]
+def temp():
+    temp = sense.get_temperature()
+    return temp
 
 
 while True:
@@ -110,6 +159,12 @@ while True:
         client.publish(settings.topic, payload=send, qos=0, retain=False)
         time.sleep(0.1)
         sense.clear()
+
+    if temp() > 45:
+        sense.set_pixels(attention)
+        # Pi ausschalten in 5s
+        subprocess.Popen(['shutdown', '-h', '-t 5'])
+        break
 
 
     time.sleep(0.08)
