@@ -1,13 +1,10 @@
 #!/usr/bin/python
-import paho.mqtt.client as mqtt
-from subprocess import call
-from sense_hat import SenseHat
 import time
+from subprocess import call
 
-
+import paho.mqtt.client as mqtt
+from sense_hat import SenseHat
 from utils.settings import *
-
-
 
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)

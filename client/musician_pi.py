@@ -1,12 +1,12 @@
 #!/usr/bin/python
-from sense_hat import SenseHat
-import time
 import subprocess
-import paho.mqtt.client as mqtt
-from utils.functions import get_ip_adress
-from utils.display import triangel, piano, guitar, attention
-from utils.settings import *
+import time
 
+import paho.mqtt.client as mqtt
+from sense_hat import SenseHat
+from utils.display import triangel, piano, guitar, attention
+from utils.functions import get_ip_adress
+from utils.settings import *
 
 ip_adress = get_ip_adress()
 
@@ -22,6 +22,7 @@ client.loop_start()
 sense = SenseHat()
 # Tonleiter
 scale = ["C", "D", "E", "F", "G", "A", "H"]
+# ToDo: Was ist der Unterschied zwischen B und H, weil H gibt es in Sonic Pi nicht!!!
 # Instrumente
 
 
@@ -54,6 +55,7 @@ def define_tones_synt(current_tones, current_synt, octave):
         current_synt += 1
         if current_synt >= len(synt):
             current_synt = 0
+            # ToDo: Warum wird hier die Octave verändert!!!
             octave += 1
             if octave > 8:
                 octave = 0
@@ -63,6 +65,7 @@ def define_tones_synt(current_tones, current_synt, octave):
         current_synt -= 1
         if current_synt < 0:
             current_synt = len(synt)-1
+            # ToDo: Warum wird hier die Octave verändert!!!
             octave -= 1
             if octave < 0:
                 octave = 8
