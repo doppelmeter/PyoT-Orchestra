@@ -155,12 +155,12 @@ while True:
     # Test auf Schüttelbewegung > 1.5g in z-Richtung, Senden an Broker bei
     if hit() > 1.5:
         sense.show_letter("X")
-        send = f"{ip_adress};{current_tones}{octave};{current_synt}"
+        send = f"{ip_adress};{scale[current_tones]}{octave};{current_synt}"
         client.publish(settings.topic, payload=send, qos=0, retain=False)
         time.sleep(0.1)
         sense.clear()
 
-    if temp() > 45:
+    if temp() > 50:
         sense.set_pixels(attention)
         # Pi ausschalten in 5s
         subprocess.Popen(['shutdown', '-h', '-t 5'])
