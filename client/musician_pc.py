@@ -1,3 +1,8 @@
+#!/usr/bin/python
+
+# ToDo: Refactoring
+# ToDo: Mapping a tiny piano-keyboard to the keyboard
+
 import time
 
 import keyboard

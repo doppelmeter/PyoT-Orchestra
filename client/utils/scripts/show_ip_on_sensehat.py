@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+# ToDo: Refactor
+# ToDo: implementing get_ip_adress from utils.function
+
 import socket
 
 from sense_hat import SenseHat

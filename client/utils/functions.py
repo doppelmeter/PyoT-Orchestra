@@ -1,5 +1,6 @@
 import socket
 
+
 def get_ip_adress():
     ip_address = '';
     connected = False

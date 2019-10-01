@@ -1,4 +1,6 @@
 #!/usr/bin/python
+
+# ToDo: !!! Refactoring !!!
 import subprocess
 import time
 
@@ -9,8 +11,6 @@ from utils.functions import get_ip_adress
 from utils.settings import *
 
 ip_adress = get_ip_adress()
-
-
 
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)
@@ -32,6 +32,7 @@ current_synt = 0
 current_tones = 0
 octave = 5
 
+
 def define_tones_synt(current_tones, current_synt, octave):
     if event.direction == "up":
         current_tones += 1
@@ -45,7 +46,7 @@ def define_tones_synt(current_tones, current_synt, octave):
     elif event.direction == "down":
         current_tones -= 1
         if current_tones < 0:
-            current_tones = len(scale)-1
+            current_tones = len(scale) - 1
             octave -= 1
             if octave < 0:
                 octave = 8
@@ -64,20 +65,20 @@ def define_tones_synt(current_tones, current_synt, octave):
     elif event.direction == "left":
         current_synt -= 1
         if current_synt < 0:
-            current_synt = len(synt)-1
+            current_synt = len(synt) - 1
             # ToDo: Warum wird hier die Octave verändert!!!
             octave -= 1
             if octave < 0:
                 octave = 8
         sense.set_pixels(synt[current_synt])
-    
+
     return current_tones, current_synt, octave
 
 
 def hit():
     acceleration = sense.get_accelerometer_raw()
-    #x = acceleration['x']
-    #y = acceleration['y']
+    # x = acceleration['x']
+    # y = acceleration['y']
     z = acceleration['z']
     return abs(z)
 
@@ -92,8 +93,8 @@ while True:
     for event in sense.stick.get_events():
         # Check if the joystick was pressed
         if event.action == "pressed":
-            current_tones, current_synt, octave = define_tones_synt(current_tones, current_synt,octave)
-            
+            current_tones, current_synt, octave = define_tones_synt(current_tones, current_synt, octave)
+
     # Test auf Schüttelbewegung > 1.5g in z-Richtung, Senden an Broker bei
     if hit() > 1.5:
         sense.show_letter("X")
@@ -107,6 +108,5 @@ while True:
         # Pi ausschalten in 5s
         subprocess.Popen(['shutdown', '-h', '-t 5'])
         break
-
 
     time.sleep(0.08)

@@ -4,9 +4,6 @@ from psonic import *
 
 from utils.settings import *
 
-
-
-
 # generate Lookup dict for notes
 # ======================================================================================================================
 

@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# ToDo: Refactor/Redesign workflow to turn of pi's
+
 import time
 from subprocess import call
 
@@ -18,6 +21,7 @@ def on_message(client, userdata, message):
         sense.show_message('Auf Wiedersehen', scroll_speed=0.1)
         time.sleep(10)
         call("sudo poweroff", shell=True)
+
 
 client.on_message = on_message
 
