@@ -5,7 +5,7 @@ from sense_hat import SenseHat
 import time
 
 
-from settings import *
+from utils.settings import *
 
 
 

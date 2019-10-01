@@ -1,31 +1,16 @@
 #!/usr/bin/python
 from sense_hat import SenseHat
 import time
-import socket
 import subprocess
 import paho.mqtt.client as mqtt
+from utils.functions import get_ip_adress
+from utils.display import triangel, piano, guitar, attention
+from utils.settings import *
 
-
-# IP-Adresse
-# ======================================================================================================================
-def get_ip_adress():
-    ip_address = '';
-    connected = False
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    while not connected:
-        connected = True
-        try:
-            s.connect(("8.8.8.8", 80))
-        except:
-            connected = False
-
-    ip_address = s.getsockname()[0]
-    s.close()
-    return ip_address
 
 ip_adress = get_ip_adress()
 
-from settings import *
+
 
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)
@@ -38,39 +23,7 @@ sense = SenseHat()
 # Tonleiter
 scale = ["C", "D", "E", "F", "G", "A", "H"]
 # Instrumente
-black = (0,0,0)
-r = (255,0,0)
-g = (0,255,0)
-y = (255,255,0)
-gray = (180, 180, 180)
-b = (0,0,255)
-w =(255,255,255)
-triangel = [g,g,g,g,g,g,g,g,
-            g,g,g,g,g,g,g,g,
-            g,g,g,w,g,g,g,g,
-            g,g,w,g,w,g,g,g,
-            g,w,g,g,g,w,g,g,
-            w,w,w,w,w,w,w,g,
-            g,g,g,g,g,g,g,g,
-            g,g,g,g,g,g,g,g]
 
-piano =    [g,g,g,g,g,g,g,g,
-            g,g,g,g,g,g,g,g,
-            gray,black,gray,black,gray,black,gray,black,
-            gray,black,gray,black,gray,black,gray,black,
-            gray,gray,gray,gray,gray,gray,gray,gray,
-            gray,gray,gray,gray,gray,gray,gray,gray,
-            g,g,g,g,g,g,g,g,
-            g,g,g,g,g,g,g,g]
-
-guitar =   [w,g,g,g,g,g,g,g,
-            g,w,g,g,g,g,g,g,
-            g,g,w,g,w,w,g,g,
-            g,g,g,w,w,w,w,g,
-            g,g,g,w,w,w,w,g,
-            g,g,g,w,w,w,w,g,
-            g,g,g,g,w,w,g,g,
-            g,g,g,g,g,g,g,g]
 
 synt = [triangel, piano, guitar]
 
@@ -125,14 +78,7 @@ def hit():
     z = acceleration['z']
     return abs(z)
 
-attention =     [r,r,r,y,y,r,r,r,
-                r,r,r,y,y,r,r,r,
-                r,r,r,y,y,r,r,r,
-                r,r,r,y,y,r,r,r,
-                r,r,r,r,r,r,r,r,
-                r,r,r,y,y,r,r,r,
-                r,r,r,y,y,r,r,r,
-                r,r,r,r,r,r,r,r]
+
 def temp():
     temp = sense.get_temperature()
     return temp

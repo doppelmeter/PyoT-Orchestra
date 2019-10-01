@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 
 from psonic import *
 
-from settings import *
+from utils.settings import *
 
 
 

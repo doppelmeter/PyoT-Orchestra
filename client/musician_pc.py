@@ -4,7 +4,7 @@ import keyboard
 import paho.mqtt.client as mqtt
 
 
-from settings import *
+from utils.settings import *
 
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)
