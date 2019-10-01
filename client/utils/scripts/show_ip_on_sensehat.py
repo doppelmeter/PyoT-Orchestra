@@ -1,9 +1,11 @@
 #!/usr/bin/python
 
-from sense_hat import SenseHat
+# ToDo: Refactor
+# ToDo: implementing get_ip_adress from utils.function
 
-import time
 import socket
+
+from sense_hat import SenseHat
 
 sense = SenseHat()
 
