@@ -4,8 +4,10 @@ from psonic import *
 
 from utils.settings import *
 
+
 # generate Lookup dict for notes
 # ======================================================================================================================
+
 
 root_notes = {
     "C0": 12,
@@ -87,13 +89,13 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(settings.topic, 1)
     print('connected to ' + settings.broker)
 
-
 def on_message(client, userdata, message):
     """
     message expects: '127.0.0.1;C4;tri':
     """
     try:
         msg = message.payload.decode("utf-8")
+
 
         ip, note, synth = msg.split(';')
         midi = int(notes[note.capitalize()])
@@ -109,9 +111,13 @@ def on_message(client, userdata, message):
         print('Could not process message ' + message.payload.decode('utf-8'))
 
 
+   
+
+
 client = mqtt.Client()
 client.on_message = on_message
 client.on_connect = on_connect
+
 
 client.connect(settings.broker, settings.broker_port, 60)
 client.loop_forever()
