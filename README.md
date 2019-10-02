@@ -4,10 +4,10 @@ This is an IoT project with the goal to make music, that we are doing as part of
 
 ### Setup RaspberryPi as Client
 * ```git clone https://github.com/doppelmeter/PyoT-Orchestra```
-* run ```/helpers/musician_setup.sh```
+* run ```/PyoT-Orchestra/helpers/musician_setup.sh```
 
 ### Start Client on RaspberryPi
-* run ```/helpers/musician_startup.sh```
+* run ```/PyoT-Orchestra/helpers/musician_startup.sh```
 
 
 
