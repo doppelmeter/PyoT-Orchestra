@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 # ToDo: Refactor/Redesign workflow to turn of pi's
+# ToDo: Error in script, it can't access the utils-package therefore
+exit()
 
 import time
 from subprocess import call
