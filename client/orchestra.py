@@ -1,14 +1,20 @@
-import paho.mqtt.client as mqtt
+import json
+import subprocess
 
+import paho.mqtt.client as mqtt
 from psonic import *
 
 from utils.settings import *
 
+# extends / set settings
+# ======================================================================================================================
+settings.output_commandline = False  # not recommended to change
+settings.command_powershell = r'powershell'
+
+settings.sound_param['release'] = 0.5
 
 # generate Lookup dict for notes
 # ======================================================================================================================
-
-
 root_notes = {
     "C0": 12,
     "Cs0": 13,
@@ -86,38 +92,65 @@ synths['sound_in_stereo'] = SOUND_IN_STEREO
 # ======================================================================================================================
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe(settings.topic, 1)
+    client.subscribe(settings.topic_sound_msg, 1)
+    client.subscribe(settings.topic_control_orchestra)
     print('connected to ' + settings.broker)
+
 
 def on_message(client, userdata, message):
     """
     message expects: '127.0.0.1;C4;tri':
     """
-    try:
-        msg = message.payload.decode("utf-8")
+    if message.topic == settings.topic_sound_msg:
+        try:
+            msg = message.payload.decode("utf-8")
 
+            ip, note, synth = msg.split(';')
+            midi = int(notes[note.capitalize()])
 
-        ip, note, synth = msg.split(';')
-        midi = int(notes[note.capitalize()])
+            if not settings.output_commandline:
 
-        if synth in synths:
-            use_synth(synths[synth.lower()])
-        else:
-            use_synth(PIANO)
+                sound_param = settings.sound_param
 
-        play(midi)
+                if synth.lower() in synths:
+                    use_synth(synths[synth.lower()])
+                else:
+                    use_synth(PIANO)
 
-    except:
-        print('Could not process message ' + message.payload.decode('utf-8'))
+                play(midi, attack=sound_param['attack'], decay=sound_param['decay'],
+                     sustain_level=sound_param['sustain_level'], sustain=sound_param['sustain'],
+                     release=sound_param['release'], cutoff=sound_param['cutoff'],
+                     cutoff_attack=sound_param['cutoff_attack'], amp=sound_param['amp'], pan=sound_param['pan'])
 
+            else:
+                command = r'echo "play ' + str(midi) + '" | sonic-pi-pipe'
+                print(command)
+                subprocess.Popen([settings.command_powershell, command],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, shell=True)
 
-   
+        except:
+            print('Could not process message ' + message.payload.decode('utf-8'))
+
+    elif message.topic == settings.topic_control_orchestra:
+        try:
+            msg = message.payload.decode("utf-8", "ignore")
+            msg_dict = json.loads(msg)
+            print(msg_dict)
+
+            for key, value in msg_dict.items():
+                if key in settings.sound_param:
+                    settings.sound_param[key] = value
+                    print("Sound parameter changed: ", key, value)
+                else:
+                    print("unexpected parameter", key, value)
+        except:
+            print('Could not process message ' + message.payload.decode('utf-8'))
 
 
 client = mqtt.Client()
 client.on_message = on_message
 client.on_connect = on_connect
-
 
 client.connect(settings.broker, settings.broker_port, 60)
 client.loop_forever()
