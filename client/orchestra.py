@@ -1,12 +1,17 @@
 import paho.mqtt.client as mqtt
+import subprocess
 
 from psonic import *
 
 from utils.settings import *
 
-# extends settings
+# extends / set settings
 # ======================================================================================================================
-settings.tone_release = 0.5
+settings.tone_release = 1
+settings.output_commandline = False # not recommended to change
+settings.command_powershell = r'powershell'
+
+settings.sound_param['release'] = 0.5
 
 # generate Lookup dict for notes
 # ======================================================================================================================
@@ -87,7 +92,7 @@ synths['sound_in_stereo'] = SOUND_IN_STEREO
 # ======================================================================================================================
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe(settings.topic, 1)
+    client.subscribe(settings.topic_sound_msg, 1)
     print('connected to ' + settings.broker)
 
 
@@ -101,12 +106,25 @@ def on_message(client, userdata, message):
         ip, note, synth = msg.split(';')
         midi = int(notes[note.capitalize()])
 
-        if synth.lower() in synths:
-            use_synth(synths[synth.lower()])
-        else:
-            use_synth(PIANO)
+        if not settings.output_commandline:
 
-        play(midi, release=settings.tone_release)
+            if synth.lower() in synths:
+                use_synth(synths[synth.lower()])
+            else:
+                use_synth(PIANO)
+
+            play(midi, attack=settings.sound_param['attack'], decay=settings.sound_param['decay'],
+                 sustain_level=settings.sound_param['sustain_level'], sustain=settings.sound_param['sustain'],
+                 release=settings.sound_param['release'], cutoff=settings.sound_param['cutoff'],
+                 cutoff_attack=settings.sound_param['cutoff_attack'], amp=settings.sound_param['amp'],
+                 pan=settings.sound_param['pan'])
+
+        else:
+            command = r'echo "play ' + str(midi) + '" | sonic-pi-pipe'
+            print(command)
+            subprocess.Popen([settings.command_powershell, command],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
 
     except:
         print('Could not process message ' + message.payload.decode('utf-8'))
