@@ -4,7 +4,7 @@ class settings:
     pass
 
 
-settings.broker = "test.mosquitto.org"
+settings.broker = "192.168.1.83"
 settings.broker_port = 1883
 settings.topic = "FHNW2019"
 settings.topic_sound_msg = settings.topic + "/sound-msg"

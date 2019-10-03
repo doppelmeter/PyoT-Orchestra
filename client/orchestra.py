@@ -8,7 +8,7 @@ from utils.settings import *
 
 # extends / set settings
 # ======================================================================================================================
-settings.output_commandline = False # not recommended to change
+settings.output_commandline = False  # not recommended to change
 settings.command_powershell = r'powershell'
 
 settings.sound_param['release'] = 0.5
@@ -110,16 +110,17 @@ def on_message(client, userdata, message):
 
             if not settings.output_commandline:
 
+                sound_param = settings.sound_param
+
                 if synth.lower() in synths:
                     use_synth(synths[synth.lower()])
                 else:
                     use_synth(PIANO)
 
-                play(midi, attack=settings.sound_param['attack'], decay=settings.sound_param['decay'],
-                     sustain_level=settings.sound_param['sustain_level'], sustain=settings.sound_param['sustain'],
-                     release=settings.sound_param['release'], cutoff=settings.sound_param['cutoff'],
-                     cutoff_attack=settings.sound_param['cutoff_attack'], amp=settings.sound_param['amp'],
-                     pan=settings.sound_param['pan'])
+                play(midi, attack=sound_param['attack'], decay=sound_param['decay'],
+                     sustain_level=sound_param['sustain_level'], sustain=sound_param['sustain'],
+                     release=sound_param['release'], cutoff=sound_param['cutoff'],
+                     cutoff_attack=sound_param['cutoff_attack'], amp=sound_param['amp'], pan=sound_param['pan'])
 
             else:
                 command = r'echo "play ' + str(midi) + '" | sonic-pi-pipe'
