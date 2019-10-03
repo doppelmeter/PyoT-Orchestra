@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self._init_ui()
         self._init_connections()
 
+
     def _init_ui(self):
         self._ui = loadUi('ui/main.ui', self)  # Hier Pfad zu Qt Designer *.ui-file angeben
         self.setWindowTitle('PyoT Orchestra Administration Tool')
@@ -54,6 +55,7 @@ class MainWindow(QMainWindow):
 
     def add_livestream(self, msg):
         self.livestream.append(msg)
+
 
     def _show_dialog_settings(self):
         d = DialogSettings(self)
