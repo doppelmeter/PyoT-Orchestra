@@ -113,7 +113,7 @@ def main():
         if message.topic == settings.topic_admin:
             msg = message.payload.decode("utf-8", "ignore")
             msg_dict = json.loads(msg)
-            if msg_dict["action"] ="helloworld":
+            if msg_dict["action"] == "helloworld":
                 window.client_list.insertItem(1,msg_dict["ip"]+"\t"+msg_dict["ip"])
             else:
                 pass
