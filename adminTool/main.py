@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon("ui/music.ico"))
         self.show()
 
-        self.client_list.insertItem(1,"1.1.1.255\tmusician")
+
 
         self.gridLayout.setContentsMargins(9, 9, 9, 9)
 
@@ -51,7 +51,6 @@ class MainWindow(QMainWindow):
 
     def get_details(self):
         print("get details")
-        self.add_livestream("test")
 
     def add_livestream(self, msg):
         self.livestream.append(msg)
@@ -114,7 +113,7 @@ def main():
         if message.topic == settings.topic_admin:
             msg = message.payload.decode("utf-8", "ignore")
             msg_dict = json.loads(msg)
-            print(msg_dict)
+            window.client_list.insertItem(1,msg_dict["ip"]+"\t"+msg_dict["ip"])
         msg = message.payload.decode("utf-8", "ignore")
         topic = message.topic
         string = topic + "\t\t" + msg
