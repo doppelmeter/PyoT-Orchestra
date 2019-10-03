@@ -5,7 +5,6 @@ import subprocess
 import time
 
 import paho.mqtt.client as mqtt
-
 from sense_hat import SenseHat
 
 from utils.display import triangel, piano, guitar, attention
@@ -94,7 +93,7 @@ def check_hit(threshold):
 def send_messeage():
     sense.show_letter("X")
     send = f"{ip_adress};{scale[current_note]}{current_octave};{synt[current_synt][0]}"
-    client.publish(settings.topic, payload=send, qos=0, retain=False)
+    client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
     time.sleep(0.1)
     sense.clear()
 

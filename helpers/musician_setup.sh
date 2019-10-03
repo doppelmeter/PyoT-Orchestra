@@ -6,4 +6,5 @@
 
 
 # clone repository
+cd ~
 git clone https://github.com/doppelmeter/PyoT-Orchestra

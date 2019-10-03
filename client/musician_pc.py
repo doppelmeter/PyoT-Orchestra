@@ -7,6 +7,7 @@ import time
 
 import keyboard
 import paho.mqtt.client as mqtt
+
 from utils.display import triangel, piano, guitar
 from utils.functions import get_ip_adress
 from utils.settings import *
@@ -65,7 +66,7 @@ while True:  # making a loop
         print(current_synt)
     elif keyboard.is_pressed('space'):  # if key 'space' is pressed
         send = f"{ip_adress};{scale[current_tones]}{octave};{current_synt}"
-        client.publish(settings.topic, payload=send, qos=0, retain=False)
+        client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         print("space ")
     else:
         pass
