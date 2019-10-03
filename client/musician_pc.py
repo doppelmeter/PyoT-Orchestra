@@ -12,12 +12,38 @@ from utils.display import triangel, piano, guitar
 from utils.functions import get_ip_adress
 from utils.settings import *
 
+try:
+    _ = settings.topic_admin
+except:
+    settings.topic_admin = settings.topic + "/admin"
+
+ip_adress = get_ip_adress()
+
+my_topic = settings.topic_admin+"/"+ip_adress.replace(".","")
+print(my_topic)
+
+def on_connect(client, userdata, flags, rc):
+    client.subscribe(my_topic)
+    print('connected to ' + settings.broker)
+
+
+def on_message(client, userdata, message):
+    """
+    message expects: '127.0.0.1;C4;tri':
+    """
+    if message.topic == my_topic:
+        msg = message.payload.decode("utf-8", "ignore")
+        msg_dict = json.loads(msg)
+        print(msg_dict)
+
 client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
 client.connect(settings.broker, settings.broker_port, 60)
 
 client.loop_start()
 
-ip_adress = get_ip_adress()
+
 
 # Tonleiter und Instrument auswählen
 # ======================================================================================================================
