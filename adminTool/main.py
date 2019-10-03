@@ -12,6 +12,7 @@ import json
 # ToDo: Client Details implementieren (nachricht analog der Anmeldenachricht aufbauen)
 # ToDo: client_pi und orchestra müssen sich noch anmelden
 
+
 # temp settings
 # ===============================
 class settings:
