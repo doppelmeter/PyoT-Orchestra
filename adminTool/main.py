@@ -21,15 +21,17 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon("ui/music.ico"))
         self.show()
 
+        self.client_list.insertItem(1,"1.1.1.255\tmusician")
+
         self.gridLayout.setContentsMargins(9, 9, 9, 9)
 
     def _init_connections(self):
         self.actionSettings.triggered.connect(self._show_dialog_settings)
         self.actionExit.triggered.connect(self._exit_app)
-        #self.button1.clicked.connect(self.methode)
+        self.client_list.clicked.connect(self.get_details)
 
-    def methode(self):
-        pass
+    def get_details(self):
+        print("get details")
 
     def _show_dialog_settings(self):
         d = DialogSettings(self)

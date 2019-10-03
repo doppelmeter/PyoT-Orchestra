@@ -97,7 +97,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QListView" name="listView"/>
+          <widget class="QListWidget" name="client_list"/>
          </item>
         </layout>
        </widget>
