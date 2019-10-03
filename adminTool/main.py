@@ -6,6 +6,10 @@ from PyQt5.uic import loadUi
 import paho.mqtt.client as mqtt
 import json
 
+# ToDo: Abmelden der Clients implementieren
+# ToDo: Verschieben und Settings importieren anstatt kopieren
+# ToDo: Client Details implementieren (nachricht analog der Anmeldenachricht aufbauen)
+# ToDo: client_pi und orchestra müssen sich noch anmelden
 
 # temp settings
 #===============================
@@ -111,8 +115,9 @@ def main():
         if message.topic == settings.topic_admin:
             msg = message.payload.decode("utf-8", "ignore")
             msg_dict = json.loads(msg)
+            print(msg_dict["action"])
             if msg_dict["action"] == "helloworld":
-                window.client_list.insertItem(1,msg_dict["ip"]+"\t"+msg_dict["ip"])
+                window.client_list.insertItem(1,msg_dict["my_ip"]+"\t"+msg_dict["my_topic"])
             else:
                 pass
         msg = message.payload.decode("utf-8", "ignore")
