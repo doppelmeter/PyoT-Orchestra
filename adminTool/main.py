@@ -26,6 +26,10 @@ class MainWindow(QMainWindow):
     def _init_connections(self):
         self.actionSettings.triggered.connect(self._show_dialog_settings)
         self.actionExit.triggered.connect(self._exit_app)
+        #self.button1.clicked.connect(self.methode)
+
+    def methode(self):
+        pass
 
     def _show_dialog_settings(self):
         d = DialogSettings(self)
