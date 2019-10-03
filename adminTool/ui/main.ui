@@ -109,7 +109,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QTextEdit" name="textEdit_2"/>
+          <widget class="QTextEdit" name="livestream"/>
          </item>
         </layout>
        </widget>

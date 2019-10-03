@@ -3,6 +3,24 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFormLayout, QDialogButtonBox
 from PyQt5.QtGui import QIcon
 from PyQt5.uic import loadUi
+import paho.mqtt.client as mqtt
+import json
+
+
+# temp settings
+#===============================
+class settings:
+    pass
+
+
+settings.broker = "test.mosquitto.org"
+settings.broker_port = 1883
+settings.topic = "FHNW2019"
+settings.topic_sound_msg = settings.topic + "/sound-msg"
+settings.topic_control_orchestra = settings.topic + "/ctl-orchestra"
+settings.topic_admin = settings.topic + "/admin"
+
+
 
 
 class MainWindow(QMainWindow):
@@ -32,6 +50,10 @@ class MainWindow(QMainWindow):
 
     def get_details(self):
         print("get details")
+        self.add_livestream("test")
+
+    def add_livestream(self, msg):
+        self.livestream.append(msg)
 
     def _show_dialog_settings(self):
         d = DialogSettings(self)
@@ -74,8 +96,37 @@ def main():
 
     :return: No return value
     """
+
+
+
+
     app = QApplication(sys.argv)
     window = MainWindow()
+
+    def on_connect(client, userdata, flags, rc):
+        client.subscribe(settings.topic_admin)
+        client.subscribe(settings.topic + "/#")
+        print('connected to ' + settings.broker)
+
+    def on_message(client, userdata, message):
+        if message.topic == settings.topic_admin:
+            msg = message.payload.decode("utf-8", "ignore")
+            msg_dict = json.loads(msg)
+            print(msg_dict)
+        msg = message.payload.decode("utf-8", "ignore")
+        topic = message.topic
+        string = topic + "\t\t" + msg
+        print(string)
+        window.add_livestream(str(string))
+
+    client = mqtt.Client()
+    client.connect(settings.broker, settings.broker_port, 60)
+    client.on_message = on_message
+    client.on_connect = on_connect
+
+    client.loop_start()
+
+
     sys.exit(app.exec_())
 
 
