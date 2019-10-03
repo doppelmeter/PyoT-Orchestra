@@ -6,13 +6,14 @@ from PyQt5.uic import loadUi
 import paho.mqtt.client as mqtt
 import json
 
+
 # ToDo: Abmelden der Clients implementieren
 # ToDo: Verschieben und Settings importieren anstatt kopieren
 # ToDo: Client Details implementieren (nachricht analog der Anmeldenachricht aufbauen)
 # ToDo: client_pi und orchestra müssen sich noch anmelden
 
 # temp settings
-#===============================
+# ===============================
 class settings:
     pass
 
@@ -25,8 +26,6 @@ settings.topic_control_orchestra = settings.topic + "/ctl-orchestra"
 settings.topic_admin = settings.topic + "/admin"
 
 
-
-
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -37,14 +36,11 @@ class MainWindow(QMainWindow):
         self._init_ui()
         self._init_connections()
 
-
     def _init_ui(self):
         self._ui = loadUi('ui/main.ui', self)  # Hier Pfad zu Qt Designer *.ui-file angeben
         self.setWindowTitle('PyoT Orchestra Administration Tool')
         self.setWindowIcon(QIcon("ui/music.ico"))
         self.show()
-
-
 
         self.gridLayout.setContentsMargins(9, 9, 9, 9)
 
@@ -58,7 +54,6 @@ class MainWindow(QMainWindow):
 
     def add_livestream(self, msg):
         self.livestream.append(msg)
-
 
     def _show_dialog_settings(self):
         d = DialogSettings(self)
@@ -102,7 +97,6 @@ def main():
     :return: No return value
     """
 
-
     app = QApplication(sys.argv)
     window = MainWindow()
 
@@ -117,7 +111,7 @@ def main():
             msg_dict = json.loads(msg)
             print(msg_dict["action"])
             if msg_dict["action"] == "helloworld":
-                window.client_list.insertItem(1,msg_dict["my_ip"]+"\t"+msg_dict["my_topic"])
+                window.client_list.insertItem(1, msg_dict["my_ip"] + "\t" + msg_dict["my_topic"])
             else:
                 pass
         msg = message.payload.decode("utf-8", "ignore")
@@ -132,7 +126,6 @@ def main():
     client.on_connect = on_connect
 
     client.loop_start()
-
 
     sys.exit(app.exec_())
 
