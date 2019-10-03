@@ -11,6 +11,9 @@ import paho.mqtt.client as mqtt
 from utils.display import triangel, piano, guitar
 from utils.functions import get_ip_adress
 from utils.settings import *
+import json
+
+import pprint
 
 try:
     _ = settings.topic_admin
@@ -24,7 +27,9 @@ print(my_topic)
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe(my_topic)
-    print('connected to ' + settings.broker)
+    print('connected to ' + settings.broker + " with " + str(client))
+    anmelde_str = '{"ip":"'+ip_adress+'", "my_topic":"'+my_topic+'"}'
+    client.publish(settings.topic_admin, anmelde_str, qos=0, retain=False)
 
 
 def on_message(client, userdata, message):
@@ -34,7 +39,10 @@ def on_message(client, userdata, message):
     if message.topic == my_topic:
         msg = message.payload.decode("utf-8", "ignore")
         msg_dict = json.loads(msg)
-        print(msg_dict)
+        pprint.pprint(msg_dict)
+    else:
+        msg = message.payload.decode("utf-8", "ignore")
+        #print("else", msg)
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -42,7 +50,6 @@ client.on_message = on_message
 client.connect(settings.broker, settings.broker_port, 60)
 
 client.loop_start()
-
 
 
 # Tonleiter und Instrument auswählen
