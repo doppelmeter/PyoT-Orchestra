@@ -28,7 +28,7 @@ print(my_topic)
 def on_connect(client, userdata, flags, rc):
     client.subscribe(my_topic)
     print('connected to ' + settings.broker + " with " + str(client))
-    anmelde_str = '{"ip":"'+ip_adress+'", "my_topic":"'+my_topic+'"}'
+    anmelde_str = '{"my_ip":"'+ip_adress+'", "action":"helloworld", "my_topic":"'+my_topic+'"}'
     client.publish(settings.topic_admin, anmelde_str, qos=0, retain=False)
 
 
