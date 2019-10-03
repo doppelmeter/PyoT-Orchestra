@@ -1,112 +1,132 @@
 #!/usr/bin/python
 
-# ToDo: !!! Refactoring !!!
+# ToDo: Refactoring
 import subprocess
 import time
 
 import paho.mqtt.client as mqtt
+
 from sense_hat import SenseHat
+
 from utils.display import triangel, piano, guitar, attention
 from utils.functions import get_ip_adress
 from utils.settings import *
 
+# get IP-adress for identification
+# ======================================================================================================================
 ip_adress = get_ip_adress()
 
+# connection to the broker
+# ======================================================================================================================
 client = mqtt.Client()
 client.connect(settings.broker, settings.broker_port, 60)
 
 client.loop_start()
 
-# Tonleiter und Instrument auswählen
+# choose scale and synthesizer
 # ======================================================================================================================
 sense = SenseHat()
-# Tonleiter
-scale = ["C", "D", "E", "F", "G", "A", "H"]
-# ToDo: Was ist der Unterschied zwischen B und H, weil H gibt es in Sonic Pi nicht!!!
-# Instrumente
 
-
-synt = [triangel, piano, guitar]
+scale = ["C", "D", "E", "F", "G", "A", "B"]
+synt = [('tri',triangel),
+        ('piano', piano),
+        ('guitar', guitar)]
 
 current_synt = 0
-current_tones = 0
-octave = 5
+current_note = 0
+current_octave = 5
 
-
-def define_tones_synt(current_tones, current_synt, octave):
+def choose_note(current_note, current_octave):
     if event.direction == "up":
-        current_tones += 1
-        if current_tones >= len(scale):
-            current_tones = 0
-            octave += 1
-            if octave > 8:
-                octave = 0
-        sense.show_letter(str(scale[current_tones]))
+        current_note += 1
+        if current_note >= len(scale):
+            current_note = 0
+            current_octave += 1
+            if current_octave > 8:
+                current_octave = 0
+
+        sense.clear()
+        sense.show_letter(scale[current_note])
+        for i in range(current_octave):
+            sense.set_pixel(7, 7-i, (255,0,0))
 
     elif event.direction == "down":
-        current_tones -= 1
-        if current_tones < 0:
-            current_tones = len(scale) - 1
-            octave -= 1
-            if octave < 0:
-                octave = 8
-        sense.show_letter(str(scale[current_tones]))
+        current_note -= 1
+        if current_note < 0:
+            current_note = len(scale) - 1
+            current_octave -= 1
+            if current_octave < 0:
+                current_octave = 8
 
-    elif event.direction == "right":
+        sense.clear()
+        sense.show_letter(scale[current_note])
+        for i in range(current_octave):
+            sense.set_pixel(7, 7-i, (255, 0, 0))
+
+    return current_note, current_octave
+
+def choose_synt(current_synt):
+    if event.direction == "right":
         current_synt += 1
         if current_synt >= len(synt):
             current_synt = 0
-            # ToDo: Warum wird hier die Octave verändert!!!
-            octave += 1
-            if octave > 8:
-                octave = 0
-        sense.set_pixels(synt[current_synt])
+        sense.set_pixels(synt[current_synt][1])
 
     elif event.direction == "left":
         current_synt -= 1
         if current_synt < 0:
             current_synt = len(synt) - 1
-            # ToDo: Warum wird hier die Octave verändert!!!
-            octave -= 1
-            if octave < 0:
-                octave = 8
-        sense.set_pixels(synt[current_synt])
+        sense.set_pixels(synt[current_synt][1])
 
-    return current_tones, current_synt, octave
+    return current_synt
 
-
-def hit():
+def check_hit(threshold):
     acceleration = sense.get_accelerometer_raw()
     # x = acceleration['x']
     # y = acceleration['y']
     z = acceleration['z']
-    return abs(z)
 
+    if abs(acceleration) > threshold:
+        return True
+    else:
+        return False
 
-def temp():
+def send_messeage():
+    sense.show_letter("X")
+    send = f"{ip_adress};{scale[current_note]}{current_octave};{synt[current_synt][0]}"
+    client.publish(settings.topic, payload=send, qos=0, retain=False)
+    time.sleep(0.1)
+    sense.clear()
+
+def check_temp(max_temp):
     temp = sense.get_temperature()
-    return temp
 
+    if temp > max_temp:
+        return True
+    else:
+        return False
 
-while True:
-    # Tonhöhe und Klangemdium auswählen
-    for event in sense.stick.get_events():
-        # Check if the joystick was pressed
-        if event.action == "pressed":
-            current_tones, current_synt, octave = define_tones_synt(current_tones, current_synt, octave)
-
-    # Test auf Schüttelbewegung > 1.5g in z-Richtung, Senden an Broker bei
-    if hit() > 1.5:
-        sense.show_letter("X")
-        send = f"{ip_adress};{scale[current_tones]}{octave};{current_synt}"
-        client.publish(settings.topic, payload=send, qos=0, retain=False)
-        time.sleep(0.1)
-        sense.clear()
-
-    if temp() > 50:
+def shutdown_pi(sec):
+    for i in reversed(range(0, sec)):
+        sense.show_letter(str(i))
+        time.sleep(0.5)
         sense.set_pixels(attention)
-        # Pi ausschalten in 5s
-        subprocess.Popen(['shutdown', '-h', '-t 5'])
+        time.sleep(0.5)
+
+    subprocess.Popen(['shutdown', '-h', f'-t {sec}'])
+
+sense.clear()
+while True:
+    for event in sense.stick.get_events():
+        if event.action == "pressed":
+            current_note, current_octave = choose_note(current_note, current_octave)
+            current_synt = choose_synt(current_synt)
+
+    if check_hit(threshold=1.2):
+        send_messeage()
+
+    if check_temp(max_temp=55):
+        shutdown_pi(sec=10)
         break
 
     time.sleep(0.08)
