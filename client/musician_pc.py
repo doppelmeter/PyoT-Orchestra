@@ -11,13 +11,46 @@ import paho.mqtt.client as mqtt
 from utils.display import triangel, piano, guitar
 from utils.functions import get_ip_adress
 from utils.settings import *
+import json
+
+import pprint
+
+try:
+    _ = settings.topic_admin
+except:
+    settings.topic_admin = settings.topic + "/admin"
+
+ip_adress = get_ip_adress()
+
+my_topic = settings.topic_admin+"/"+ip_adress.replace(".","")
+print(my_topic)
+
+def on_connect(client, userdata, flags, rc):
+    client.subscribe(my_topic)
+    print('connected to ' + settings.broker + " with " + str(client))
+    anmelde_str = '{"my_ip":"'+ip_adress+'", "action":"helloworld", "my_topic":"'+my_topic+'"}'
+    client.publish(settings.topic_admin, anmelde_str, qos=0, retain=False)
+
+
+def on_message(client, userdata, message):
+    """
+    message expects: '127.0.0.1;C4;tri':
+    """
+    if message.topic == my_topic:
+        msg = message.payload.decode("utf-8", "ignore")
+        msg_dict = json.loads(msg)
+        pprint.pprint(msg_dict)
+    else:
+        msg = message.payload.decode("utf-8", "ignore")
+        #print("else", msg)
 
 client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
 client.connect(settings.broker, settings.broker_port, 60)
 
 client.loop_start()
 
-ip_adress = get_ip_adress()
 
 # Tonleiter und Instrument auswählen
 # ======================================================================================================================
@@ -64,7 +97,7 @@ while True:  # making a loop
         if current_synt < 0:
             current_synt = len(synt) - 1
         print(current_synt)
-    elif keyboard.is_pressed('space'):  # if key 'space' is pressed
+    if keyboard.is_pressed('space'):  # if key 'space' is pressed
         send = f"{ip_adress};{scale[current_tones]}{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         print("space ")
