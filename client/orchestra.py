@@ -10,6 +10,7 @@ from utils.settings import *
 # ======================================================================================================================
 settings.output_commandline = False  # not recommended to change
 settings.command_powershell = r'powershell'
+settings.active_loops_synths = []
 
 settings.sound_param['release'] = 0.5
 
@@ -88,6 +89,24 @@ synths['sound_in'] = SOUND_IN
 synths['sound_in_stereo'] = SOUND_IN_STEREO
 
 
+# define funczions
+# ======================================================================================================================
+def define_sonicpi_loop(synth="piano"):
+    command = f"live_loop :l_{synth} do\n" \
+              "use_real_time\n" \
+              f"a,b=sync '/osc/trigger/{synth}'\n" \
+              f"synth :{synth}, note: a, release: b\n" \
+              "end"
+
+    run(command)
+
+    # run("""live_loop :foo do
+    #   use_real_time
+    #   a = sync "/osc/trigger/piano"
+    #   synth :piano, note: a
+    # end """)
+
+
 # MQTT-subscriber and sound generator
 # ======================================================================================================================
 
@@ -102,36 +121,58 @@ def on_message(client, userdata, message):
     message expects: '127.0.0.1;C4;tri':
     """
     if message.topic == settings.topic_sound_msg:
+
         try:
             msg = message.payload.decode("utf-8")
 
             ip, note, synth = msg.split(';')
             midi = int(notes[note.capitalize()])
 
-            if not settings.output_commandline:
+            if synth not in synths:
+                synth = "piano"
 
-                sound_param = settings.sound_param
+            if synth not in settings.active_loops_synths:
+                define_sonicpi_loop(synth)
+                settings.active_loops_synths.append(synth)
+                print("Loop defined for synth ", synth)
+                time.sleep(0.5)
 
-                if synth.lower() in synths:
-                    use_synth(synths[synth.lower()])
-                else:
-                    use_synth(PIANO)
-
-                play(midi, attack=sound_param['attack'], decay=sound_param['decay'],
-                     sustain_level=sound_param['sustain_level'], sustain=sound_param['sustain'],
-                     release=sound_param['release'], cutoff=sound_param['cutoff'],
-                     cutoff_attack=sound_param['cutoff_attack'], amp=sound_param['amp'], pan=sound_param['pan'])
-
-            else:
-                command = r'echo "play ' + str(midi) + '" | sonic-pi-pipe'
-                print(command)
-                subprocess.Popen([settings.command_powershell, command],
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, shell=True)
+            send_message(f'/trigger/{synth}', midi, settings.sound_param["release"])
 
         except:
-            print('Could not process message ' + message.payload.decode(
-                'utf-8') + ' @ topic ' + settings.topic_sound_msg)
+            print(
+                'Could not process message ' + message.payload.decode('utf-8') + ' @ topic ' + settings.topic_sound_msg)
+
+        # try:
+        #     msg = message.payload.decode("utf-8")
+        #
+        #     ip, note, synth = msg.split(';')
+        #     midi = int(notes[note.capitalize()])
+        #
+        #     if not settings.output_commandline:
+        #
+        #         sound_param = settings.sound_param
+        #
+        #         if synth.lower() in synths:
+        #             use_synth(synths[synth.lower()])
+        #         else:
+        #             use_synth(PIANO)
+        #
+        #         play(midi, attack=sound_param['attack'], decay=sound_param['decay'],
+        #              sustain_level=sound_param['sustain_level'], sustain=sound_param['sustain'],
+        #              release=sound_param['release'], cutoff=sound_param['cutoff'],
+        #              cutoff_attack=sound_param['cutoff_attack'], amp=sound_param['amp'], pan=sound_param['pan'])
+        #
+        #     else:
+        #         command = r'echo "play ' + str(midi) + '" | sonic-pi-pipe'
+        #         print(command)
+        #         subprocess.Popen([settings.command_powershell, command],
+        #                          stdout=subprocess.PIPE,
+        #                          stderr=subprocess.PIPE, shell=True)
+        #
+        # except:
+        #     print('Could not process message ' + message.payload.decode(
+        #         'utf-8') + ' @ topic ' + settings.topic_sound_msg)
 
     elif message.topic == settings.topic_control_orchestra:
         try:
