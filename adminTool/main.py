@@ -27,6 +27,9 @@ settings.topic_control_orchestra = settings.topic + "/ctl-orchestra"
 settings.topic_admin = settings.topic + "/admin"
 
 
+clients_db = {}
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -50,8 +53,11 @@ class MainWindow(QMainWindow):
         self.actionExit.triggered.connect(self._exit_app)
         self.client_list.clicked.connect(self.get_details)
 
-    def get_details(self):
-        print("get details")
+    def get_details(self, item):
+        ip = item.data().split("\t")[0]
+        self.details_client_id.setText(ip)
+        self.details_client_db.setText(repr(clients_db[ip]))
+
 
     def add_livestream(self, msg):
         self.livestream.append(msg)
@@ -113,6 +119,7 @@ def main():
             print(msg_dict["action"])
             if msg_dict["action"] == "helloworld":
                 window.client_list.insertItem(1, msg_dict["my_ip"] + "\t" + msg_dict["my_topic"])
+                clients_db[msg_dict["my_ip"]] = {"my_topic": msg_dict["my_topic"]}
             else:
                 pass
         msg = message.payload.decode("utf-8", "ignore")
@@ -120,6 +127,7 @@ def main():
         string = topic + "\t\t" + msg
         print(string)
         window.add_livestream(str(string))
+
 
     client = mqtt.Client()
     client.connect(settings.broker, settings.broker_port, 60)
@@ -133,3 +141,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

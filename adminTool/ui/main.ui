@@ -56,7 +56,11 @@
             </widget>
            </item>
            <item row="2" column="0" colspan="3">
-            <widget class="QTextEdit" name="textEdit"/>
+            <widget class="QTextEdit" name="details_client_db">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item row="3" column="0">
             <widget class="QPushButton" name="pushButton_2">
@@ -80,7 +84,11 @@
             </widget>
            </item>
            <item row="0" column="1" colspan="2">
-            <widget class="QLineEdit" name="clientIDLineEdit"/>
+            <widget class="QLineEdit" name="details_client_id">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item row="1" column="1" colspan="2">
             <widget class="QLineEdit" name="temperaturLineEdit"/>
