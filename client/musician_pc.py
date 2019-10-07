@@ -75,27 +75,27 @@ while True:  # making a loop
         send = f"{ip_adress};C{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('d'):
+    if keyboard.is_pressed('d'):
         send = f"{ip_adress};D{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('f'):
+    if keyboard.is_pressed('f'):
         send = f"{ip_adress};E{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('g'):
+    if keyboard.is_pressed('g'):
         send = f"{ip_adress};F{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('h'):
+    if keyboard.is_pressed('h'):
         send = f"{ip_adress};G{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('j'):
+    if keyboard.is_pressed('j'):
         send = f"{ip_adress};A{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
-    elif keyboard.is_pressed('k'):
+    if keyboard.is_pressed('k'):
         send = f"{ip_adress};B{octave};{current_synt}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
