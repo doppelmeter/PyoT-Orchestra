@@ -130,7 +130,8 @@ def on_message(client, userdata, message):
                                  stderr=subprocess.PIPE, shell=True)
 
         except:
-            print('Could not process message ' + message.payload.decode('utf-8'))
+            print('Could not process message ' + message.payload.decode(
+                'utf-8') + ' @ topic ' + settings.topic_sound_msg)
 
     elif message.topic == settings.topic_control_orchestra:
         try:
@@ -145,7 +146,8 @@ def on_message(client, userdata, message):
                 else:
                     print("unexpected parameter", key, value)
         except:
-            print('Could not process message ' + message.payload.decode('utf-8'))
+            print('Could not process message ' + message.payload.decode(
+                'utf-8') + ' @ topic ' + settings.topic_control_orchestra)
 
 
 client = mqtt.Client()
