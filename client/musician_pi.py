@@ -7,7 +7,7 @@ import time
 import paho.mqtt.client as mqtt
 from sense_hat import SenseHat
 
-from utils.display import triangel, piano, guitar, attention
+from utils.display import triangel, piano, pluck, growl, attention
 from utils.functions import get_ip_adress
 from utils.settings import *
 
@@ -29,7 +29,8 @@ sense = SenseHat()
 scale = ["C", "D", "E", "F", "G", "A", "B"]
 synt = [('tri',triangel),
         ('piano', piano),
-        ('guitar', guitar)]
+        ('pluck', pluck),
+        ('growl', growl)]
 
 current_synt = 0
 current_note = 0
@@ -112,7 +113,7 @@ def shutdown_pi(sec):
         sense.set_pixels(attention)
         time.sleep(0.5)
 
-    subprocess.Popen(['shutdown', '-h', f'-t {sec}'])
+    subprocess.Popen(['shutdown', '-h', f'-t 1'])
 
 sense.clear()
 while True:

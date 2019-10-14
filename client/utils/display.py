@@ -23,13 +23,22 @@ piano = [g, g, g, g, g, g, g, g,
          g, g, g, g, g, g, g, g,
          g, g, g, g, g, g, g, g]
 
-guitar = [w, g, g, g, g, g, g, g,
+pluck = [w, g, g, g, g, g, g, g,
           g, w, g, g, g, g, g, g,
           g, g, w, g, w, w, g, g,
           g, g, g, w, w, w, w, g,
           g, g, g, w, w, w, w, g,
           g, g, g, w, w, w, w, g,
           g, g, g, g, w, w, g, g,
+          g, g, g, g, g, g, g, g]
+
+growl =  [g, g, g, g, g, g, g, g,
+          g, g, w, g, g, g, g, g,
+          g, g, w, g, g, g, g, g,
+          g, g, w, g, w, g, g, g,
+          g, g, w, g, w, w, g, g,
+          g, g, g, w, w, g, g, g,
+          g, g, g, g, g, g, g, g,
           g, g, g, g, g, g, g, g]
 
 attention = [r, r, r, y, y, r, r, r,
