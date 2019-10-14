@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from utils.display import triangel, piano, guitar
+from utils.display import triangel, piano, pluck
 from utils.functions import get_ip_adress
 from utils.settings import *
 
@@ -33,7 +33,7 @@ scale[-1] = "B"
 # Instrumente
 
 
-synt = [triangel, piano, guitar]
+synt = ['tri', 'piano', 'pluck']
 
 current_synt = 0
 current_tones = 0
@@ -68,35 +68,35 @@ while True:  # making a loop
             current_synt = len(synt) - 1
         logging.debug(current_synt)
     if keyboard.is_pressed('space'):  # if key 'space' is pressed
-        send = f"{ip_adress};{scale[current_tones]}{octave};{current_synt}"
+        send = f"{ip_adress};{scale[current_tones]}{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('s'):
-        send = f"{ip_adress};C{octave};{current_synt}"
+        send = f"{ip_adress};C{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('d'):
-        send = f"{ip_adress};D{octave};{current_synt}"
+        send = f"{ip_adress};D{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('f'):
-        send = f"{ip_adress};E{octave};{current_synt}"
+        send = f"{ip_adress};E{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('g'):
-        send = f"{ip_adress};F{octave};{current_synt}"
+        send = f"{ip_adress};F{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('h'):
-        send = f"{ip_adress};G{octave};{current_synt}"
+        send = f"{ip_adress};G{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('j'):
-        send = f"{ip_adress};A{octave};{current_synt}"
+        send = f"{ip_adress};A{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
     if keyboard.is_pressed('k'):
-        send = f"{ip_adress};B{octave};{current_synt}"
+        send = f"{ip_adress};B{octave};{synt[current_synt]}"
         client.publish(settings.topic_sound_msg, payload=send, qos=0, retain=False)
         logging.debug(send)
 
