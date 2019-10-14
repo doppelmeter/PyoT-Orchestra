@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Add script as cronjob @reboot
+# if wanted, add script as user cronjob @reboot
 
 # Update from GitHub
 cd ~/PyoT-Orchestra/
